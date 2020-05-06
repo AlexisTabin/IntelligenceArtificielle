@@ -1,10 +1,8 @@
 import csv
 
-
 #CREATION DE LA LISTE DE DONNEES
-
 donnees = []
-list_of_names = []
+categories = []
 
 with open ('train_bin.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter = ',')
@@ -15,22 +13,23 @@ with open ('train_bin.csv') as csv_file:
     for row in csv_reader:
 
         if line_count == 0: #nom des catégories
-            list_of_names = row
-            list_of_names[0] = 'age'
+            categories = row
+            categories[0] = 'age' #premiere categorie ne marchait pas tres bien
             
         else:
-            #ajout du numero de patient / parcourt des lignes
-            #donnees[line_count - 1].append(f'patient nb {line_count}')
-
+            #remplissage des colonnes de donnees
             patient = []
-            patient.append('patient')
-            patient.append({}) #add a dictionary
-            #parcourt les colonnes
-            for i in range(0,len(list_of_names)):
-                patient[1][list_of_names[i]] = row[i]
-                  
+            patient.append('patient'+str(line_count - 1))
+            patient.append({})
+            
+            for i in range(0,len(categories)):
+                patient[1][categories[i]] = row[i]
             donnees.append(patient)
+            
         line_count += 1
+
+
+
 
 
 
