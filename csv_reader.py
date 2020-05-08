@@ -11,25 +11,20 @@ with open ('train_bin.csv') as csv_file:
                 #print(f'there are {rows_total} lines')
     
     for row in csv_reader:
-
+            
         if line_count == 0: #nom des catégories
             categories = row
-            categories[0] = 'age' #premiere categorie ne marchait pas tres bien
-            
+            categories[0] = 'age'             
         else:
             #remplissage des colonnes de donnees
-            patient = []
-            patient.append('patient'+str(line_count - 1))
-            patient.append({})
+            target = []
+            target.append(row[-1]) #classe: valeur de 'target'
+            target.append({}) #attributs + valeurs
             
-            for i in range(0,len(categories)):
-                patient[1][categories[i]] = row[i]
-            donnees.append(patient)
+            for i in range(0,len(categories) - 1):
+                target[1][categories[i]] = row[i]
+            donnees.append(target)
             
         line_count += 1
-
-
-
-
 
 
