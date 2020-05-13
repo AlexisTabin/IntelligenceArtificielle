@@ -1,6 +1,7 @@
 from functions import csv_reader
 from functions import test_precision
 from moteur_id3.id3 import ID3
+from task_3.rule_generation import rule_generation
 
 
 class ResultValues:
@@ -20,6 +21,8 @@ class ResultValues:
         print(arbre)
         print()
 
+        regles = rule_generation(arbre)
+        print(regles)
         # Task 2
         file_task2 = 'test_public_bin.csv'
         precision = test_precision(file_task2, arbre)
