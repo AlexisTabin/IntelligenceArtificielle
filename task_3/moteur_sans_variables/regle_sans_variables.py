@@ -35,9 +35,15 @@ class RegleSansVariables:
             :return: ``True`` si les faits passés en paramètres suffisent à\
             déclencher la règle.
         """
-        return self.conditions.issubset(faits)
+
+        """ J'ai inversé la valeur de retour (self.conditions.issubset(faits) 
+        par ce qu'il y a ci-dessous, parce que dans nos règles issues de notre arbre,
+        il se peut qu'il y ait des conditions qui ne puissent être satisfaites en même temps
+        (comme age = 2 et age = 3) 
+        """
+        return set(faits).issubset(self.conditions)
 
     def __repr__(self):
         """ Représentation d'une règle sous forme de string. """
-        return '{} => {}'.format(str(list(self.conditions)), 
+        return '{} => {}\n'.format(str(list(self.conditions)),
                                  str(self.conclusion))

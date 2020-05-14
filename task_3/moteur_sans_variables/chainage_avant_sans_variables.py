@@ -15,12 +15,13 @@ class ChainageAvantSansVariables(Chainage):
 
             if fait not in self.solutions:
                 self.solutions.append(fait)
-                self.trace.append(fait)
+
 
                 # Vérifie si des règles sont déclenchées par le nouveau fait.
                 for regle in self.connaissances.regles:
                     if regle.depend_de(fait) and regle.satisfaite_par(self.solutions):
                         queue.append(regle.conclusion)
-                        self.trace.append(regle)
+                        if (not self.trace.__contains__(regle)):
+                            self.trace.append(regle)
 
         return self.solutions

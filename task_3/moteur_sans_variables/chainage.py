@@ -46,19 +46,18 @@ class Chainage:
         # Nous retournons un ensemble vide dans ce cas.
         return self.solutions
 
-    def affiche_trace(self, indent=None):
+    def affiche_trace(self):
         """ Affiche la trace d'un chaînage après l'appel à ``chaine``.
 
             :param str indent: l'identation souhaitée au début de chaque ligne\
             (quatre espaces par défaut).
         """
 
-        if indent is None:
-            indent = Chainage.__indentation
+        print('Grâce à cette règle : ')
+        print()
+        print(self.trace[0])
 
-        print('Trace:')
-        for evenement in self.trace:
-            print('{}{}'.format(indent, evenement))
+        self.affiche_solutions()
 
     def affiche_solutions(self, indent=None):
         """ Affiche les solutions d'un chaînage après l'appel à ``chaine``.
@@ -70,9 +69,15 @@ class Chainage:
         if indent is None:
             indent = Chainage.__indentation
 
-        if len(self.solutions) > 0:
-            print('Faits déduits:')
-            for fait in self.solutions:
-                print('{}{}'.format(indent, fait))
+        n = len(self.solutions)
+        if n > 0:
+            print('On en déduit : ')
+
+            print_sol = '('
+            for i in range(n - 2):
+                print_sol += '{}, '.format(self.solutions[i])
+            print_sol += '{}) => (classe = {})'.format(self.solutions[n-2], self.solutions[n-1])
+            print(print_sol)
+
         else:
             print('Aucun fait trouvé.')

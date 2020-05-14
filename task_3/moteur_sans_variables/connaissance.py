@@ -4,19 +4,12 @@ class BaseConnaissances:
         règles d'un système de chaînage avant.
     """
 
-    def __init__(self, constructeur_de_regle):    
-        """ Construit une base de connaissances.
-
-            Le paramètre ``constructeur_de_regle`` doit être une fonction\ 
-            prenant deux arguments : la liste des conditions d'une règle et sa\
-            conclusion. La fonction doit retourner une règle du type désiré.
-
-            :param contructeur_de_regle: une fonction construisant une règle.
-        """
+    def __init__(self):
+        """ Construit une base de connaissances. """
 
         self.faits = []
         self.regles = []
-        self.constructeur_de_regle = constructeur_de_regle
+
 
     def ajoute_un_fait(self, fait):
         """ Ajoute un fait dans la base de connaissances. 
@@ -34,29 +27,26 @@ class BaseConnaissances:
         
         self.faits.extend(faits)
             
-    def ajoute_une_regle(self, description):
-        """ Ajoute une règle dans la base de connaissances étant donné sa\
-            description.
+    def ajoute_une_regle(self, regle):
+        """ Ajoute une règle dans la base de connaissances.
 
             Une règle est décrite par une liste (ou un tuple) de deux\
             éléments : une liste de conditions et une conclusion.
 
             Les conditions et la conclusion doivent être des propositions.
 
-            :param description: une description de règle.
+            :param regle: une règle.
         """
-
-        regle = self.constructeur_de_regle(description)
         self.regles.append(regle)
 
-    def ajoute_regles(self, descriptions):
+    def ajoute_regles(self, regles):
         """ Ajoute des règles dans la base de connaissances.
 
-            L'argument est une liste de descriptions, chacune composée d'une\
+            L'argument est une liste de règles, chacune composée d'une\
             liste de conditions et d'une conséquence.
 
-            :param list descriptions: une liste de descriptions de règles.
+            :param list regles: une liste de descriptions de règles.
         """
 
-        for description in descriptions:
-            self.ajoute_une_regle(description)
+        for regle in regles:
+            self.ajoute_une_regle(regle)
