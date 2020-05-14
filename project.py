@@ -1,5 +1,5 @@
-from functions import csv_reader
-from functions import test_precision
+from task_1.csc_reader import csv_reader
+from task_2.test_precision import test_precision
 from moteur_id3.id3 import ID3
 from task_3.rule_generation import rule_generation
 
@@ -11,7 +11,7 @@ class ResultValues:
 
         # Task 1
         # self.arbre = None
-        file_task1 = 'train_bin.csv'
+        file_task1 = 'data/train_bin.csv'
         donnees_train = csv_reader(file_task1)
 
         id3 = ID3()
@@ -24,7 +24,7 @@ class ResultValues:
         regles = rule_generation(arbre)
         print(regles)
         # Task 2
-        file_task2 = 'test_public_bin.csv'
+        file_task2 = 'data/test_public_bin.csv'
         precision = test_precision(file_task2, arbre)
 
         print('-----TASK 2-----')
