@@ -1,5 +1,5 @@
 from moteur_id3.noeud_de_decision import NoeudDeDecision
-from task_3.regle_avec_variables import RegleAvecVariables as Regle
+from task_3.moteur_sans_variables.regle_sans_variables import RegleSansVariables as Regle
 
 
 def rule_generation(arbre):
@@ -22,14 +22,14 @@ def rule_generation(arbre):
             le noeud courant est la racine.
         """
         if arbre.terminal():
-            regle.conclusion = 'Alors {}'.format(arbre.classe().upper())
+            regle.conclusion = arbre.classe()
             regles.append(regle)
         else:
             for valeur, enfant in arbre.enfants.items():
-                regle.conditions += 'Si {} = {}: '.format(arbre.attribut, valeur.upper())
+                regle.conditions.add('{} = {}'.format(arbre.attribut, valeur.upper()))
                 rule_generation_helper(enfant, regle)
 
-    regle = Regle('', '')
+    regle = Regle([], None)
     rule_generation_helper(arbre, regle)
 
     return regles
