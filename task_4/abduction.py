@@ -15,3 +15,6 @@ qui nécéssite soit 0, 1 ou 2 changement pour que le patient soit diagnostiqué
 """
 def abuction(patient : List[str], regles : List[Regle]):
     print("abduction")
+
+
+    print(regles)

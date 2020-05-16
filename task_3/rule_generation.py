@@ -1,4 +1,5 @@
 from sys import argv
+from typing import List
 
 from moteur_id3.noeud_de_decision import NoeudDeDecision
 from task_3.moteur_sans_variables.chainage_avant_sans_variables import ChainageAvantSansVariables
@@ -21,20 +22,20 @@ def rule_generation(arbre):
     vraies règles """
     regles = []
 
-    def rule_generation_helper(arbre: NoeudDeDecision, regle: Regle):
+    def rule_generation_helper(arbre: NoeudDeDecision, conditions: List[str]):
         """ Représentation sous forme de string de l'arbre de décision duquel\
             le noeud courant est la racine.
         """
         if arbre.terminal():
-            regle.conclusion = arbre.classe()
+            regle = Regle(conditions, arbre.classe())
             regles.append(regle)
         else:
             for valeur, enfant in arbre.enfants.items():
-                regle.conditions.add(create_condition_from_nb(arbre.attribut, valeur.upper()))
-                rule_generation_helper(enfant, regle)
+                conditions.append(create_condition_from_nb(arbre.attribut, valeur.upper()))
+                rule_generation_helper(enfant, list(conditions))
 
-    regle = Regle([], None)
-    rule_generation_helper(arbre, regle)
+    conditions = []
+    rule_generation_helper(arbre, conditions)
 
     return regles
 

@@ -33,7 +33,7 @@ class ResultValues:
         self.arbre_advance = None
 
         # self.print_tasks()
-        self.print_task_4()
+        #self.print_task_4()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
