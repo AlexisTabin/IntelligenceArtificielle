@@ -1,4 +1,3 @@
-
 class RegleSansVariables:
     """ Représentation d'une règle d'inférence pour le chaînage sans\
         variables. 
@@ -14,7 +13,7 @@ class RegleSansVariables:
             déclenchement de la règle.
         """
 
-        self.conditions = set(conditions)
+        self.conditions = conditions
         self.conclusion = conclusion
 
     def depend_de(self, fait):
@@ -45,5 +44,8 @@ class RegleSansVariables:
 
     def __repr__(self):
         """ Représentation d'une règle sous forme de string. """
-        return '{} => {}\n'.format(str(list(self.conditions)),
-                                 str(self.conclusion))
+        result = ''
+        for key, value in self.conditions.items():
+            result += ' {} = {},'.format(key, value)
+        return '({}) => {}\n'.format(result[:-1],
+                                     str(self.conclusion))

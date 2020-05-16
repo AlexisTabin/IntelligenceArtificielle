@@ -31,7 +31,7 @@ class BaseConnaissances:
         """ Ajoute une règle dans la base de connaissances.
 
             Une règle est décrite par une liste (ou un tuple) de deux\
-            éléments : une liste de conditions et une conclusion.
+            éléments : un dictionnaire de conditions et une conclusion.
 
             Les conditions et la conclusion doivent être des propositions.
 

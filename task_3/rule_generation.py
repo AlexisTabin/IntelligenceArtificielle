@@ -22,7 +22,7 @@ def rule_generation(arbre):
     vraies règles """
     regles = []
 
-    def rule_generation_helper(arbre: NoeudDeDecision, conditions: List[str]):
+    def rule_generation_helper(arbre: NoeudDeDecision, conditions: dict):
         """ Représentation sous forme de string de l'arbre de décision duquel\
             le noeud courant est la racine.
         """
@@ -31,10 +31,12 @@ def rule_generation(arbre):
             regles.append(regle)
         else:
             for valeur, enfant in arbre.enfants.items():
-                conditions.append(create_condition_from_nb(arbre.attribut, valeur.upper()))
-                rule_generation_helper(enfant, list(conditions))
+                copie = dict(conditions)
+                copie[arbre.attribut] = valeur
+               # copie.append(create_condition_from_nb(arbre.attribut, valeur.upper()))
+                rule_generation_helper(enfant, copie)
 
-    conditions = []
+    conditions = {}
     rule_generation_helper(arbre, conditions)
 
     return regles
@@ -43,9 +45,10 @@ def rule_generation(arbre):
 def derive_faits_from_file(file):
     faits = []
     for don in file:
-        fait = []
+        fait = {}
         for k, v in don[1].items():
-            fait.append(create_condition_from_nb(k, v))
+            fait[k] = v
+            #fait.append(create_condition_from_nb(k, v))
         faits.append(fait)
     return faits
 

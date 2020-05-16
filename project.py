@@ -26,14 +26,15 @@ class ResultValues:
         # Task 3
         self.regles = rule_generation(self.arbre)
         self.faits_initiaux = derive_faits_from_file(donnees_train)
-
+        print(self.faits_initiaux[0])
+        print(self.regles[0])
         # Task 4
 
         # Task 5
         self.arbre_advance = None
 
-        # self.print_tasks()
-        #self.print_task_4()
+        #self.print_tasks()
+        #self.print_task_3()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
@@ -55,7 +56,7 @@ class ResultValues:
         print('-----TASK 3-----')
         print()
         random_patient: List[str] = random.choice(self.faits_initiaux)
-        justification(random_patient, self.regles)
+        #justification(random_patient, self.regles)
         print()
 
     def print_task_4(self):
