@@ -1,7 +1,8 @@
 from moteur_id3.id3 import ID3
 from task_1.csc_reader import csv_reader
 from task_2.test_precision import test_precision
-from task_3.rule_generation import rule_generation, derive_faits_from_file,justification
+from task_3.rule_generation import rule_generation, derive_faits_from_file, justification
+import random
 
 
 class ResultValues:
@@ -34,7 +35,7 @@ class ResultValues:
         print()
         self.regles = rule_generation(self.arbre)
         self.faits_initiaux = derive_faits_from_file(donnees_train)
-        justification(self.faits_initiaux[0], self.regles)
+        justification(random.choice(self.faits_initiaux), self.regles)
         print()
 
         # Task 5

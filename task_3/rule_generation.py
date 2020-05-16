@@ -61,6 +61,6 @@ def justification(exemple, regles):
     moteur = ChainageAvantSansVariables(bc)
     moteur.chaine()
 
-    if len(argv) > 1 and argv[1].lower() == 'trace':
+   # if len(argv) > 1 and argv[1].lower() == 'trace':
         # Utile durant le déboggage.
-        moteur.affiche_trace()
+    moteur.affiche_trace()
