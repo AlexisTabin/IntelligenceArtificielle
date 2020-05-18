@@ -16,12 +16,12 @@ class ResultValues:
         # Task 1
         file_task1 = 'data/train_bin.csv'
         donnees_train = csv_reader(file_task1)
-        id3 = ID3()
-        self.arbre = id3.construit_arbre(donnees_train)
+        self.id3 = ID3()
+        self.arbre = self.id3.construit_arbre(donnees_train)
 
         # Task 2
-        file_task2 = 'data/test_public_bin.csv'
-        self.precision = test_precision(file_task2, self.arbre)
+        self.file_task2 = 'data/test_public_bin.csv'
+        self.precision = test_precision(self.file_task2, self.arbre)
 
         # Task 3
         self.regles = generateur_de_regles(self.arbre)
@@ -32,8 +32,8 @@ class ResultValues:
         # Task 5
         self.arbre_advance = None
 
+        self.print_task_4()
         #self.print_tasks()
-        self.print_task_3()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
@@ -60,11 +60,16 @@ class ResultValues:
         print()
 
     def print_task_4(self):
+        """!!! On doit utiliser les patients des données test cette fois"""
         # Task 4
         print('-----TASK 4-----')
+        donnees_test = csv_reader(self.file_task2)
+        arbre_test = self.id3.construit_arbre(donnees_test)
+        regles_test = generateur_de_regles(arbre_test)
+        faits_test = derive_faits_depuis_fichier(donnees_test)
         print()
-        random_patient: List[str] = random.choice(self.faits_initiaux)
-        abuction(random_patient, self.regles)
+        rdm_patient = faits_test[random.randint(0, len(faits_test) - 1)]
+        abuction(rdm_patient, regles_test)
 
     def print_tasks(self):
         self.print_task_1()

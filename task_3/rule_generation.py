@@ -20,7 +20,7 @@ def generateur_de_regles(arbre):
         """ Permet de générer les règles à partir d'un arbre
         """
         if arbre.terminal():
-            regle = Regle(conditions, arbre.classe())
+            regle = Regle(conditions, int(arbre.classe()))
             regles.append(regle)
         else:
             for valeur, enfant in arbre.enfants.items():
@@ -43,7 +43,7 @@ def derive_faits_depuis_fichier(fichier):
         for k, v in donnee[1].items():
             fait[k] = int(v)
             # fait.append(create_condition_from_nb(k, v))
-        fait['diagnostic'] = donnee[0]
+        fait['diagnostic'] = int(donnee[0])
         faits.append(fait)
     return faits
 
