@@ -4,7 +4,7 @@ from typing import List
 from moteur_id3.id3 import ID3
 from task_1.csc_reader import csv_reader
 from task_2.test_precision import test_precision
-from task_3.rule_generation import rule_generation, derive_faits_from_file, justification
+from task_3.rule_generation import generateur_de_regles, derive_faits_depuis_fichier, justification
 from task_4.abduction import abuction
 
 
@@ -24,17 +24,16 @@ class ResultValues:
         self.precision = test_precision(file_task2, self.arbre)
 
         # Task 3
-        self.regles = rule_generation(self.arbre)
-        self.faits_initiaux = derive_faits_from_file(donnees_train)
-        print(self.faits_initiaux[0])
-        print(self.regles[0])
+        self.regles = generateur_de_regles(self.arbre)
+        self.faits_initiaux = derive_faits_depuis_fichier(donnees_train)
+
         # Task 4
 
         # Task 5
         self.arbre_advance = None
 
         #self.print_tasks()
-        #self.print_task_3()
+        self.print_task_3()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
@@ -55,8 +54,9 @@ class ResultValues:
         # Task 3
         print('-----TASK 3-----')
         print()
-        random_patient: List[str] = random.choice(self.faits_initiaux)
-        #justification(random_patient, self.regles)
+        rdm_patient_index = random.randint(0, len(self.faits_initiaux) - 1)
+        rdm_patient = self.faits_initiaux[rdm_patient_index]
+        print(justification(rdm_patient, self.regles))
         print()
 
     def print_task_4(self):

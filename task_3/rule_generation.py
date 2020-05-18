@@ -1,13 +1,8 @@
-from sys import argv
-from typing import List
-
 from moteur_id3.noeud_de_decision import NoeudDeDecision
-from task_3.moteur_sans_variables.chainage_avant_sans_variables import ChainageAvantSansVariables
-from task_3.moteur_sans_variables.connaissance import BaseConnaissances
-from task_3.moteur_sans_variables.regle_sans_variables import RegleSansVariables as Regle
+from task_3.regle_sans_variables import RegleSansVariables as Regle
 
 
-def rule_generation(arbre):
+def generateur_de_regles(arbre):
     """ Idée pour générer toutes les règles de l'arbre de décision :
     A partir de l'arbre final, il faut parcourir chaque branche une fois, jusqu'à la feuille
     L'idée est d'appeler le depth first search algorithm avec comme but un noeud qui n'est pas dans l'arbre.
@@ -18,13 +13,11 @@ def rule_generation(arbre):
     Se baser sur la manière dont on print l'arbre récursivement pour implémenter les règles (semble bieeeeeeeeen plus simple)
      """
 
-    """ Pour le moment, les conditions et la conclusion de chaque règle sont juste des strings, on pourrait en faire de
-    vraies règles """
+    """ Les règles et les faits sont des dictionnaires, rendant leur comparaison plus facile"""
     regles = []
 
     def rule_generation_helper(arbre: NoeudDeDecision, conditions: dict):
-        """ Représentation sous forme de string de l'arbre de décision duquel\
-            le noeud courant est la racine.
+        """ Permet de générer les règles à partir d'un arbre
         """
         if arbre.terminal():
             regle = Regle(conditions, arbre.classe())
@@ -32,8 +25,8 @@ def rule_generation(arbre):
         else:
             for valeur, enfant in arbre.enfants.items():
                 copie = dict(conditions)
-                copie[arbre.attribut] = valeur
-               # copie.append(create_condition_from_nb(arbre.attribut, valeur.upper()))
+                copie[arbre.attribut] = int(valeur)
+                # copie.append(create_condition_from_nb(arbre.attribut, valeur.upper()))
                 rule_generation_helper(enfant, copie)
 
     conditions = {}
@@ -42,29 +35,36 @@ def rule_generation(arbre):
     return regles
 
 
-def derive_faits_from_file(file):
+def derive_faits_depuis_fichier(fichier):
+    """Permet de générer les faits à partir d'un fichier"""
     faits = []
-    for don in file:
+    for donnee in fichier:
         fait = {}
-        for k, v in don[1].items():
-            fait[k] = v
-            #fait.append(create_condition_from_nb(k, v))
+        for k, v in donnee[1].items():
+            fait[k] = int(v)
+            # fait.append(create_condition_from_nb(k, v))
+        fait['diagnostic'] = donnee[0]
         faits.append(fait)
     return faits
 
 
-def create_condition_from_nb(a, b):
-    return '{} = {}'.format(a, b)
-
-
 def justification(exemple, regles):
-    bc = BaseConnaissances()
-    bc.ajoute_faits(exemple)
-    bc.ajoute_regles(regles)
+    "Renvoie un string j, la justification de l'exemple par la bonne règle"
+    regle_valide = find_regle(exemple, regles)
+    result = 'Grâce à cette règle : \n'
+    result += regle_valide.__repr__()
+    result += 'On en déduit : \n('
+    for key, value in exemple.items():
+        result += ' {} = {},'.format(key, value)
+    return '{}) => {}\n'.format(result[:-1], str(regle_valide.conclusion))
 
-    moteur = ChainageAvantSansVariables(bc)
-    moteur.chaine()
 
-   # if len(argv) > 1 and argv[1].lower() == 'trace':
-        # Utile durant le déboggage.
-    moteur.affiche_trace()
+def find_regle(fait, regles):
+    """Permet de trouver la/les règle(s) parmi la liste de règles, qui justifie le fait"""
+    for regle in regles:
+        is_valid = True
+        for key, value in regle.conditions.items():
+            if fait[key] != value:
+                is_valid = False
+        if is_valid:
+            return regle

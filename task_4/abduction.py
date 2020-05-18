@@ -1,6 +1,6 @@
 from typing import List
 
-from task_3.moteur_sans_variables.regle_sans_variables import RegleSansVariables as Regle
+from task_3.regle_sans_variables import RegleSansVariables as Regle
 """
 Première idée pour la tâche 4 : On trie les règles et on ne prend que celles qui mènent vers une diagnostic positif.
 Pour le patient que l'on cherche à diagnostiquer, on commence par enlever les critères age et sexe.
