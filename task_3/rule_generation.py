@@ -16,7 +16,7 @@ def generateur_de_regles(arbre):
     """ Les règles et les faits sont des dictionnaires, rendant leur comparaison plus facile"""
     regles = []
 
-    def rule_generation_helper(arbre: NoeudDeDecision, conditions: dict):
+    def aide_generateur_de_regles(arbre: NoeudDeDecision, conditions: dict):
         """ Permet de générer les règles à partir d'un arbre
         """
         if arbre.terminal():
@@ -26,11 +26,10 @@ def generateur_de_regles(arbre):
             for valeur, enfant in arbre.enfants.items():
                 copie = dict(conditions)
                 copie[arbre.attribut] = int(valeur)
-                # copie.append(create_condition_from_nb(arbre.attribut, valeur.upper()))
-                rule_generation_helper(enfant, copie)
+                aide_generateur_de_regles(enfant, copie)
 
     conditions = {}
-    rule_generation_helper(arbre, conditions)
+    aide_generateur_de_regles(arbre, conditions)
 
     return regles
 
@@ -42,7 +41,6 @@ def derive_faits_depuis_fichier(fichier):
         fait = {}
         for k, v in donnee[1].items():
             fait[k] = int(v)
-            # fait.append(create_condition_from_nb(k, v))
         fait['diagnostic'] = int(donnee[0])
         faits.append(fait)
     return faits

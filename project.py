@@ -1,11 +1,10 @@
 import random
-from typing import List
 
 from moteur_id3.id3 import ID3
 from task_1.csc_reader import csv_reader
 from task_2.test_precision import test_precision
 from task_3.rule_generation import generateur_de_regles, derive_faits_depuis_fichier, justification
-from task_4.abduction import abuction
+from task_4.abduction import nb_patients_sauvables
 
 
 class ResultValues:
@@ -32,8 +31,7 @@ class ResultValues:
         # Task 5
         self.arbre_advance = None
 
-        self.print_task_4()
-        #self.print_tasks()
+        self.print_tasks()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
@@ -57,7 +55,6 @@ class ResultValues:
         rdm_patient_index = random.randint(0, len(self.faits_initiaux) - 1)
         rdm_patient = self.faits_initiaux[rdm_patient_index]
         print(justification(rdm_patient, self.regles))
-        print()
 
     def print_task_4(self):
         """!!! On doit utiliser les patients des données test cette fois"""
@@ -68,8 +65,8 @@ class ResultValues:
         regles_test = generateur_de_regles(arbre_test)
         faits_test = derive_faits_depuis_fichier(donnees_test)
         print()
-        rdm_patient = faits_test[random.randint(0, len(faits_test) - 1)]
-        abuction(rdm_patient, regles_test)
+        total = nb_patients_sauvables(faits_test, regles_test)
+        print("le nb de personnes pouvant être guerries en changeant 1 ou 2 attribut est : {}".format(total))
 
     def print_tasks(self):
         self.print_task_1()
