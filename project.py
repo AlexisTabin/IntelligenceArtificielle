@@ -1,7 +1,10 @@
+import random
+
 from moteur_id3.id3 import ID3
 from task_1.csc_reader import csv_reader
 from task_2.test_precision import test_precision
-from task_3.rule_generation import rule_generation, derive_faits_from_file,justification
+from task_3.rule_generation import generateur_de_regles, derive_faits_depuis_fichier, justification
+from task_4.abduction import nb_patients_sauvables
 
 
 class ResultValues:
@@ -12,36 +15,64 @@ class ResultValues:
         # Task 1
         file_task1 = 'data/train_bin.csv'
         donnees_train = csv_reader(file_task1)
-
-        id3 = ID3()
-        self.arbre = id3.construit_arbre(donnees_train)
-        print('-----TASK 1-----')
-        print('Arbre de décision:')
-        print(self.arbre)
+        self.id3 = ID3()
+        self.arbre = self.id3.construit_arbre(donnees_train)
 
         # Task 2
-        file_task2 = 'data/test_public_bin.csv'
-        precision = test_precision(file_task2, self.arbre)
-
-        print('-----TASK 2-----')
-        print()
-        print('Precision des diagnostics:')
-        print(precision)
-        print()
+        self.file_task2 = 'data/test_public_bin.csv'
+        self.precision = test_precision(self.file_task2, self.arbre)
 
         # Task 3
-        print('-----TASK 3-----')
-        print()
-        self.regles = rule_generation(self.arbre)
-        self.faits_initiaux = derive_faits_from_file(donnees_train)
-        justification(self.faits_initiaux[0], self.regles)
-        print()
+        self.regles = generateur_de_regles(self.arbre)
+        self.faits_initiaux = derive_faits_depuis_fichier(donnees_train)
+
+        # Task 4
 
         # Task 5
         self.arbre_advance = None
 
+        self.print_tasks()
+
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
+
+    def print_task_1(self):
+        print('-----TASK 1-----')
+        print('Arbre de décision:')
+        print(self.arbre)
+
+    def print_task_2(self):
+        print('-----TASK 2-----')
+        print()
+        print('Precision des diagnostics:')
+        print(self.precision)
+        print()
+
+    def print_task_3(self):
+        # Task 3
+        print('-----TASK 3-----')
+        print()
+        rdm_patient_index = random.randint(0, len(self.faits_initiaux) - 1)
+        rdm_patient = self.faits_initiaux[rdm_patient_index]
+        print(justification(rdm_patient, self.regles))
+
+    def print_task_4(self):
+        """!!! On doit utiliser les patients des données test cette fois"""
+        # Task 4
+        print('-----TASK 4-----')
+        donnees_test = csv_reader(self.file_task2)
+        arbre_test = self.id3.construit_arbre(donnees_test)
+        regles_test = generateur_de_regles(arbre_test)
+        faits_test = derive_faits_depuis_fichier(donnees_test)
+        print()
+        total = nb_patients_sauvables(faits_test, regles_test)
+        print("le nb de personnes pouvant être guerries en changeant 1 ou 2 attribut est : {}".format(total))
+
+    def print_tasks(self):
+        self.print_task_1()
+        self.print_task_2()
+        self.print_task_3()
+        self.print_task_4()
 
 
 result = ResultValues()
