@@ -11,8 +11,11 @@ Si c'est > 2, on abandonne la règle pour ce patient.
 Si c'est 0, le patient n'est pas affecté par cette règle.
 Si c'est 1 ou 2, on garde la règle
 A la fin, on se retrouve avec pour chaque patient, une règle associée,
-qui nécéssite soit 0, 1 ou 2 changement pour que le patient soit diagnostiqué guerri
+qui nécessite soit 0, 1 ou 2 changement pour que le patient soit diagnostiqué guerri
 
+Deuxième idée : En enlevant des règles et des patiens l'âge et le sexe, cela induit une erreur.
+L'idée est de garder en considération l'âge et le sexe, mais si un patient diffère d'une règle
+à cause d'un de ces deux attributs, alors on abandonne la règle
 """
 
 
@@ -25,7 +28,7 @@ def diagnostic_et_prescription(patient: dict, regles: List[Regle]):
     diagnostic = "nb problemes : {} => ".format(problemes)
     if problemes == 0:
         diagnostic += "Le patient n'est pas malade :)"
-        return diagnostic, None, 0
+        return diagnostic, None, -1
     elif problemes > 2:
         diagnostic += "Le patient n'est pas soignable :("
         return diagnostic, None, 0
@@ -42,20 +45,17 @@ def trouve_regles_possibles(patient: dict, regles: List[Regle]):
     @return la règle la plus proche du patient
     et le nombre d'attribut du patient à changer pour qu'elle soit satisfaite
     """
-    patient.pop('age', None)
-    patient.pop('sex', None)
     regles_triees = [regle for regle in regles if regle.conclusion == 0]
-    for regle in regles_triees:
-        regle.conditions.pop('age', None)
-        regle.conditions.pop('sex', None)
-
     # J'ai mis 10 ici, mais n'importe quel nb > 3 jouerait
     meilleure_regle = None, 10
     for regle in regles_triees:
         counter = 0
         for key, value in regle.conditions.items():
             if patient[key] != value:
-                counter += 1
+                if key == 'sex' or key == 'age':
+                    counter = 10  # Si la règle diffère du patient par rapport à l'âge, on l'abandonne
+                else:
+                    counter += 1
         if counter < meilleure_regle[1]:
             meilleure_regle = regle, counter
     return meilleure_regle
@@ -71,8 +71,10 @@ def soigner_patient(patient, regle):
     prescription = 'En changeant '
     for key, value in regle.conditions.items():
         if patient[key] != value:
-            prescription += '{} = {} par {} et'.format(key, patient[key], value)
-    prescription = prescription[:-3] + ', on guérit le patient'
+            if not(key == 'sex' or key == 'age'):
+                prescription += '{} = {} par {} et'.format(key, patient[key], value)
+    prescription = prescription[:-3] + ', on guérit le patient\n'
+    prescription += 'Grâce à cette règle : ' + regle.__repr__()
     return prescription
 
 
@@ -82,8 +84,17 @@ def nb_patients_sauvables(patients: List[dict], regles: List[Regle]):
     @param regles : Une liste de règle
     @return total : le nombre total de patients pouvant être guerris
     """
+    patients_sauvables = 0
+    patients_saufs = 0
+    patients_fichus = 0
     total = 0
     for patient in patients:
         _, _, code = diagnostic_et_prescription(patient, regles)
-        total += code
-    return total
+        total += 1
+        if code == -1:
+            patients_saufs += 1
+        elif code == 0:
+            patients_fichus += 1
+        else:
+            patients_sauvables += 1
+    return total, patients_fichus, patients_sauvables, patients_saufs
