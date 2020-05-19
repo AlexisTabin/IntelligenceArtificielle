@@ -4,7 +4,7 @@ from moteur_id3.id3 import ID3
 from task_1.csc_reader import csv_reader
 from task_2.test_precision import test_precision
 from task_3.rule_generation import generateur_de_regles, derive_faits_depuis_fichier, justification
-from task_4.abduction import nb_patients_sauvables
+from task_4.abduction import nb_patients_sauvables, diagnostic_et_prescription
 
 
 class ResultValues:
@@ -55,18 +55,22 @@ class ResultValues:
         rdm_patient_index = random.randint(0, len(self.faits_initiaux) - 1)
         rdm_patient = self.faits_initiaux[rdm_patient_index]
         print(justification(rdm_patient, self.regles))
+        if rdm_patient['diagnostic'] == 1:
+           diagnostic, presription, _ = diagnostic_et_prescription(rdm_patient, self.regles)
+           print(presription)
 
     def print_task_4(self):
         """!!! On doit utiliser les patients des données test cette fois"""
         # Task 4
         print('-----TASK 4-----')
         donnees_test = csv_reader(self.file_task2)
-        arbre_test = self.id3.construit_arbre(donnees_test)
-        regles_test = generateur_de_regles(arbre_test)
         faits_test = derive_faits_depuis_fichier(donnees_test)
         print()
-        total = nb_patients_sauvables(faits_test, regles_test)
-        print("le nb de personnes pouvant être guerries en changeant 1 ou 2 attribut est : {}".format(total))
+        total, fichus, sauvables, saufs = nb_patients_sauvables(faits_test, self.regles)
+        print("Sur un nombre total de {} patients,".format(total))
+        print("le nb de personnes pouvant être guerries en changeant 1 ou 2 attribut est : {}".format(sauvables))
+        print("il y a {} personnes qui ne sont pas malades ".format(saufs))
+        print("et {}heureusement {} personnes fichues".format("mal" if (fichus != 0) else '', fichus))
 
     def print_tasks(self):
         self.print_task_1()
