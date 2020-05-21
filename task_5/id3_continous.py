@@ -46,7 +46,7 @@ class ID3_continous:
 
         return arbre
 
-    def construit_arbre_recur(self, donnees, attributs, predominant_class):
+    def construit_arbre_recur(self, donnees, attributs, predominant_class, previous_attribut = None):
         """ Construit rédurcivement un arbre de décision à partir 
             des données d'apprentissage et d'un dictionnaire liant
             les attributs à la liste de leurs valeurs possibles.
@@ -80,43 +80,58 @@ class ID3_continous:
 
             
         else:
-            # Sélectionne la combinaison attribut/valeur qui réduit au maximum l'entropie.
+            # Sélectionne la combinaison attribut/valeur qui réduit au maximum l'entropie. QUELLE FCT ENTROPIE??
 
-            entro = 2
-            valeur = None
-            attri = None
+
+
+
+            h_C_As_attribs = {}
+            print('att: ', len(attributs))
             for attribut in attributs:
+                print(len(attributs[attribut]))
+                for valeur in attributs[attribut]:
+                    entro = self.h_C_aj(donnees, attribut, valeur)
+                    h_C_As_attribs[attribut] = entro
 
-                h, val = self.h_C_A(donnees, attribut, attributs[attribut])
+            print('tout: ', len(h_C_As_attribs))
 
-                if h[0] < entro and h[0] > 0:
-                    valeur = val
-                    attri = attribut
-                    entro = h[0]
+            attribut = min(h_C_As_attribs, key=lambda k: h_C_As_attribs[k])
 
-            attribut = attri
 
+            #debug
             print('nous sommes à ' + attribut)
             print('valeur: ', valeur)
             print('entro: ', entro)
 
+
+
             # Crée les sous-arbres de manière récursive.
+            print(attributs)
+            print()
+
             attributs_restants = attributs.copy()
-            attributs_restants[attribut]
-            #pas besoin de supprimer l'attribut qui a été choisi
+
+            # enlève l'attribut pendant un tour: ancien attribut
+            ancien_attribut = {attribut: attributs_restants[attribut]}
+            print(ancien_attribut)
+            del attributs_restants[attribut]
+
+            # rajoute l'attribu suspendu pdt 1 tour: previous attribut
+            #OUPS
 
             partitions = self.partitionne(donnees, attribut, valeur)
-
 
             enfants = {}
             enfants['gauche'] = self.construit_arbre_recur(partitions[0],
                                                              attributs_restants,
-                                                             predominant_class)
-            print('fait gauche-----------------------------')
+                                                             predominant_class, ancien_attribut)
+
             enfants['droite'] = self.construit_arbre_recur(partitions[1],
                                                              attributs_restants,
-                                                             predominant_class)
+                                                             predominant_class, ancien_attribut)
+            #debug
             print('fait droite')
+
             return NoeudDeDecision_continous(attribut, donnees, str(predominant_class), enfants)
 
     def partitionne(self, donnees, attribut, valeur):
@@ -143,11 +158,12 @@ class ID3_continous:
                 gauche.append(donnee)
             else: #on met dans le noeud de droite
                 droite.append(donnee)
-
+        print()
         print('gauche')
         print(len(gauche))
         print('droite')
         print(len(droite))
+        print()
 
         return [gauche, droite]
 
