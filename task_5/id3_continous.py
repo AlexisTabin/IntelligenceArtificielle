@@ -1,4 +1,5 @@
 from math import log
+from decimal import Decimal
 from .noeud_de_decision_continous import NoeudDeDecision_continous
 
 class ID3_continous:
@@ -80,6 +81,7 @@ class ID3_continous:
             
         else:
             # Sélectionne la combinaison attribut/valeur qui réduit au maximum l'entropie.
+
             entro = 2
             valeur = None
             attri = None
@@ -87,7 +89,7 @@ class ID3_continous:
 
                 h, val = self.h_C_A(donnees, attribut, attributs[attribut])
 
-                if h[0] < entro:
+                if h[0] < entro and h[0] > 0:
                     valeur = val
                     attri = attribut
                     entro = h[0]
@@ -97,9 +99,10 @@ class ID3_continous:
             print('nous sommes à ' + attribut)
             print('valeur: ', valeur)
             print('entro: ', entro)
+
             # Crée les sous-arbres de manière récursive.
             attributs_restants = attributs.copy()
-            del attributs_restants[attribut]
+            attributs_restants[attribut]
             #pas besoin de supprimer l'attribut qui a été choisi
 
             partitions = self.partitionne(donnees, attribut, valeur)
@@ -109,9 +112,11 @@ class ID3_continous:
             enfants['gauche'] = self.construit_arbre_recur(partitions[0],
                                                              attributs_restants,
                                                              predominant_class)
+            print('fait gauche-----------------------------')
             enfants['droite'] = self.construit_arbre_recur(partitions[1],
                                                              attributs_restants,
                                                              predominant_class)
+            print('fait droite')
             return NoeudDeDecision_continous(attribut, donnees, str(predominant_class), enfants)
 
     def partitionne(self, donnees, attribut, valeur):
@@ -133,20 +138,17 @@ class ID3_continous:
         gauche = []
         droite = []
 
-        #(alice)
         for donnee in donnees:
-
-            for val in donnee[1][attribut]:
-
-                if int(val) < 55: #int(valeur): #on met dans le noeud de gauche
-                    gauche.append(donnee)
-                else: #on met dans le noeud de droite
-                    droite.append(donnee)
+            if Decimal(donnee[1][attribut]) <= Decimal(valeur): #on met dans le noeud de gauche
+                gauche.append(donnee)
+            else: #on met dans le noeud de droite
+                droite.append(donnee)
 
         print('gauche')
         print(len(gauche))
         print('droite')
         print(len(droite))
+
         return [gauche, droite]
 
     def p_aj(self, donnees, attribut, valeur):
