@@ -34,9 +34,6 @@ class ResultValues:
         self.file_continous_train = 'data/train_continuous.csv'
         donnees_continous = csv_reader(self.file_continous_train)
         self.file_continous_test = 'data/test_public_continuous.csv'
-
-
-
         self.id3_continous = ID3_continous()
         self.arbre_continous = self.id3_continous.construit_arbre(donnees_continous)
         self.precision_continous = test_precision(self.file_continous_test, self.arbre_continous)

@@ -180,7 +180,7 @@ class ID3:
         """
         # Les classes attestées dans les exemples.
         classes = list(set([donnee[0] for donnee in donnees]))
-        
+
         # Calcule p(c_i|a_j) pour chaque classe c_i.
         p_ci_ajs = [self.p_ci_aj(donnees, attribut, valeur, classe) 
                     for classe in classes]
@@ -205,5 +205,7 @@ class ID3:
         # Calcule H_C_aj pour chaque valeur a_j de l'attribut A.
         h_c_ajs = [self.h_C_aj(donnees, attribut, valeur) 
                    for valeur in valeurs]
+
+
 
         return sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])

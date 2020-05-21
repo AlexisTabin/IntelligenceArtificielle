@@ -76,29 +76,45 @@ class ID3_continous:
         # on peut retourner un noeud terminal.         
         elif classe_unique(donnees):
             return NoeudDeDecision_continous(None, donnees, str(predominant_class))
+
             
         else:
-            # Sélectionne l'attribut qui réduit au maximum l'entropie.
-            h_C_As_attribs = [(self.h_C_A(donnees, attribut, attributs[attribut]), 
-                               attribut) for attribut in attributs]
+            # Sélectionne la combinaison attribut/valeur qui réduit au maximum l'entropie.
+            entro = 2
+            valeur = None
+            attri = None
+            for attribut in attributs:
 
-            attribut = min(h_C_As_attribs, key=lambda h_a: h_a[0])[1]
+                h, val = self.h_C_A(donnees, attribut, attributs[attribut])
 
+                if h[0] < entro:
+                    valeur = val
+                    attri = attribut
+                    entro = h[0]
+
+            attribut = attri
+
+            print('nous sommes à ' + attribut)
+            print('valeur: ', valeur)
+            print('entro: ', entro)
             # Crée les sous-arbres de manière récursive.
             attributs_restants = attributs.copy()
             del attributs_restants[attribut]
+            #pas besoin de supprimer l'attribut qui a été choisi
 
-            partitions = self.partitionne(donnees, attribut, attributs[attribut])
-            
+            partitions = self.partitionne(donnees, attribut, valeur)
+
+
             enfants = {}
-            for valeur, partition in partitions.items():
-                enfants[valeur] = self.construit_arbre_recur(partition,
+            enfants['gauche'] = self.construit_arbre_recur(partitions[0],
                                                              attributs_restants,
                                                              predominant_class)
-
+            enfants['droite'] = self.construit_arbre_recur(partitions[1],
+                                                             attributs_restants,
+                                                             predominant_class)
             return NoeudDeDecision_continous(attribut, donnees, str(predominant_class), enfants)
 
-    def partitionne(self, donnees, attribut, valeurs):
+    def partitionne(self, donnees, attribut, valeur):
         """ Partitionne les données sur les valeurs a_j de l'attribut A.
 
             :param list donnees: les données à partitioner.
@@ -108,13 +124,30 @@ class ID3_continous:
             l'attribut A une liste l_j contenant les données pour lesquelles A\
             vaut a_j.
         """
-        partitions = {valeur: [] for valeur in valeurs}
-        
+
+        #(alice)
+        #GAUCHE: LESS THAN
+        #DROITE: GREATER THAN OR EQUAL TO
+
+
+        gauche = []
+        droite = []
+
+        #(alice)
         for donnee in donnees:
-            partition = partitions[donnee[1][attribut]]
-            partition.append(donnee)
-            
-        return partitions
+
+            for val in donnee[1][attribut]:
+
+                if int(val) < 55: #int(valeur): #on met dans le noeud de gauche
+                    gauche.append(donnee)
+                else: #on met dans le noeud de droite
+                    droite.append(donnee)
+
+        print('gauche')
+        print(len(gauche))
+        print('droite')
+        print(len(droite))
+        return [gauche, droite]
 
     def p_aj(self, donnees, attribut, valeur):
         """ p(a_j) - la probabilité que la valeur de l'attribut A soit a_j.
@@ -180,7 +213,7 @@ class ID3_continous:
         """
         # Les classes attestées dans les exemples.
         classes = list(set([donnee[0] for donnee in donnees]))
-        
+
         # Calcule p(c_i|a_j) pour chaque classe c_i.
         p_ci_ajs = [self.p_ci_aj(donnees, attribut, valeur, classe) 
                     for classe in classes]
@@ -200,10 +233,19 @@ class ID3_continous:
             :return: H(C|A)
         """
         # Calcule P(a_j) pour chaque valeur a_j de l'attribut A.
-        p_ajs = [self.p_aj(donnees, attribut, valeur) for valeur in valeurs]
+
+        #(alice) on va trouver la valeur min
+        #p_ajs = min([self.p_aj(donnees, attribut, valeur) for valeur in valeurs])
+        p_ajs = {}
+        for valeur in valeurs:
+            p_ajs[valeur] = [self.p_aj(donnees, attribut, valeur)]
+
+        valeur = min(p_ajs.items(), key=lambda entro: entro[1])[0]
 
         # Calcule H_C_aj pour chaque valeur a_j de l'attribut A.
-        h_c_ajs = [self.h_C_aj(donnees, attribut, valeur) 
-                   for valeur in valeurs]
+        h_c_ajs = [self.h_C_aj(donnees, attribut, valeur)]
+                   #for valeur in valeurs]
 
-        return sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])
+
+        return h_c_ajs, valeur
+        #sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])
