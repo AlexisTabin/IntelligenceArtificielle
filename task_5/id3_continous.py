@@ -2,14 +2,15 @@ from math import log
 from decimal import Decimal
 from .noeud_de_decision_continous import NoeudDeDecision_continous
 
+
 class ID3_continous:
-    """ Algorithme ID3. 
+    """ Algorithme ID3.
 
         This is an updated version from the one in the book (Intelligence Artificielle par la pratique).
         Specifically, in construit_arbre_recur(), if donnees == [] (line 70), it returns a terminal node with the predominant class of the dataset -- as computed in construit_arbre() -- instead of returning None.
         Moreover, the predominant class is also passed as a parameter to NoeudDeDecision().
     """
-    
+
     def construit_arbre(self, donnees):
         """ Construit un arbre de décision à partir des données d'apprentissage.
 
@@ -18,9 +19,9 @@ class ID3_continous:
             :return: une instance de NoeudDeDecision correspondant à la racine de\
             l'arbre de décision.
         """
-        
-        # Nous devons extraire les domaines de valeur des 
-        # attributs, puisqu'ils sont nécessaires pour 
+
+        # Nous devons extraire les domaines de valeur des
+        # attributs, puisqu'ils sont nécessaires pour
         # construire l'arbre.
         attributs = {}
         for donnee in donnees:
@@ -41,13 +42,13 @@ class ID3_continous:
                 predominant_class_counter = [row[0] for row in donnees].count(c)
                 predominant_class = c
         # print(predominant_class)
-            
+
         arbre = self.construit_arbre_recur(donnees, attributs, predominant_class)
 
         return arbre
 
     def construit_arbre_recur(self, donnees, attributs, predominant_class):
-        """ Construit rédurcivement un arbre de décision à partir 
+        """ Construit rédurcivement un arbre de décision à partir
             des données d'apprentissage et d'un dictionnaire liant
             les attributs à la liste de leurs valeurs possibles.
 
@@ -58,69 +59,53 @@ class ID3_continous:
             :return: une instance de NoeudDeDecision correspondant à la racine de\
             l'arbre de décision.
         """
-        
+
         def classe_unique(donnees):
             """ Vérifie que toutes les données appartiennent à la même classe. """
-            
+
             if len(donnees) == 0:
-                return True 
+                return True
             premiere_classe = donnees[0][0]
             for donnee in donnees:
                 if donnee[0] != premiere_classe:
-                    return False 
+                    return False
             return True
 
         if donnees == []:
             return NoeudDeDecision_continous(None, [str(predominant_class), dict()], str(predominant_class))
 
         # Si toutes les données restantes font partie de la même classe,
-        # on peut retourner un noeud terminal.         
+        # on peut retourner un noeud terminal.
         elif classe_unique(donnees):
             return NoeudDeDecision_continous(None, donnees, str(predominant_class))
 
-            
-        else:
-            # Sélectionne la combinaison attribut/valeur qui réduit au maximum l'entropie, en utilisant h_C_aj
 
-            #toutes les entropies
+        else:  # Sélectionne la combinaison attribut/valeur qui réduit au maximum l'entropie, en utilisant h_C_aj
+
+            # toutes les entropies
             h_C_As_attribs = []
 
             for attribut in attributs:
                 h_C_As = [(self.h_C_aj(donnees, attribut, valeur),
-                                   attribut, valeur) for valeur in attributs[attribut]]
+                           attribut, valeur) for valeur in attributs[attribut]]
 
                 h_C_As_attribs = h_C_As_attribs + h_C_As
-            print('---')
 
-
-            #trouver l'entro minimum, l'attribut + sa valeur correspondante
+            # trouver l'entropie minimum, l'attribut + sa valeur correspondante
             min_entro = 2
             for ligne in h_C_As_attribs:
-                if ligne[0] < min_entro:
-                    min_entro = ligne[0]
-                    min_attribut = ligne[1]
-                    min_valeur = ligne[2]
+                if ligne[0] < min_entro:  # and ligne[0] > 0: #SI ON NE PREND PAS D'ENTROPIE = a 0
 
-
-            #debug
-            print('nous sommes à ', min_attribut)
-            print('valeur: ', min_valeur)
-            print('entro: ', min_entro)
-
-
-            #print('all attributs: ', attributs)
-            #print()
+                    # on veut verifier que la valeur pour cette attribut n'est pas la min sinon inutile (max okay car >=)
+                    if ligne[2] != min(attributs[ligne[1]]):
+                        min_entro = ligne[0]
+                        min_attribut = ligne[1]
+                        min_valeur = ligne[2]
 
             # Crée les sous-arbres de manière récursive.
             partitions = self.partitionne(donnees, min_attribut, min_valeur)
-            # print('partition gauche')
-            # print(partitions[0])
-            # print('partition droite')
-            # print(partitions[1])
 
-
-            previous_attribut = {min_attribut: attributs[min_attribut]} #à rajouter maybe pour le = ?
-
+            # Mise à jour des nouveaux attributs pour chaque noeud (pas delete l'attribut!)
             attributs_gauche = {}
             for donnee in partitions[0]:
                 for attribut, valeur in donnee[1].items():
@@ -139,25 +124,15 @@ class ID3_continous:
                         attributs_droite[attribut] = valeurs
                     valeurs.add(valeur)
 
-
-            #attributs_droite.append()
-            # print('att gauche')
-            # print(attributs_gauche)
-            # print('att droite')
-            # print(attributs_droite)
-
-
+            # creation des 2 enfants (3e entree: valeur de separation, utile pour l'affichage de NoeudDeDecision)
             enfants = {}
             enfants['less than '] = self.construit_arbre_recur(partitions[0],
-                                                             attributs_gauche,
-                                                             predominant_class)
+                                                               attributs_gauche,
+                                                               predominant_class)
             enfants['more than '] = self.construit_arbre_recur(partitions[1],
-                                                             attributs_droite,
-                                                             predominant_class)
+                                                               attributs_droite,
+                                                               predominant_class)
             enfants['valeur separation'] = min_valeur
-            #debug
-            #print('enfant: ')
-            #print(enfants)
 
             return NoeudDeDecision_continous(min_attribut, donnees, str(predominant_class), enfants)
 
@@ -172,24 +147,17 @@ class ID3_continous:
             vaut a_j.
         """
 
-
-        #GAUCHE: LESS THAN OR EQUAL TO
-        #DROITE: GREATER THAN OR EQUAL TO
+        # GAUCHE: LESS THAN
+        # DROITE: GREATER THAN OR EQUAL TO
 
         gauche = []
         droite = []
 
         for donnee in donnees:
-            if Decimal(donnee[1][attribut]) < Decimal(valeur): #on met dans le noeud de gauche
+            if Decimal(donnee[1][attribut]) < Decimal(valeur):  # on met dans le noeud de gauche
                 gauche.append(donnee)
-            elif Decimal(donnee[1][attribut]) > Decimal(valeur): #on met dans le noeud de droite
+            elif Decimal(donnee[1][attribut]) >= Decimal(valeur):  # on met dans le noeud de droite
                 droite.append(donnee)
-        # print()
-        # print('gauche')
-        # print(len(gauche))
-        # print('droite')
-        # print(len(droite))
-        # print()
 
         return [gauche, droite]
 
@@ -198,23 +166,23 @@ class ID3_continous:
 
             :param list donnees: les données d'apprentissage.
             :param attribut: l'attribut A.
-            :param valeur: la valeur a_j de l'attribut A.            
+            :param valeur: la valeur a_j de l'attribut A.
             :return: p(a_j)
         """
         # Nombre de données.
         nombre_donnees = len(donnees)
-        
+
         # Permet d'éviter les divisions par 0.
         if nombre_donnees == 0:
             return 0.0
-        
+
         # Nombre d'occurrences de la valeur a_j parmi les données.
         nombre_aj = 0
         for donnee in donnees:
             if donnee[1][attribut] == valeur:
                 nombre_aj += 1
 
-        # p(a_j) = nombre d'occurrences de la valeur a_j parmi les données / 
+        # p(a_j) = nombre d'occurrences de la valeur a_j parmi les données /
         #          nombre de données.
         return nombre_aj / nombre_donnees
 
@@ -231,17 +199,17 @@ class ID3_continous:
         # Nombre d'occurrences de la valeur a_j parmi les données.
         donnees_aj = [donnee for donnee in donnees if donnee[1][attribut] == valeur]
         nombre_aj = len(donnees_aj)
-        
+
         # Permet d'éviter les divisions par 0.
         if nombre_aj == 0:
             return 0
-        
-        # Nombre d'occurrences de la classe c_i parmi les données pour lesquelles 
+
+        # Nombre d'occurrences de la classe c_i parmi les données pour lesquelles
         # A vaut a_j.
         donnees_ci = [donnee for donnee in donnees_aj if donnee[0] == classe]
         nombre_ci = len(donnees_ci)
 
-        # p(c_i|a_j) = nombre d'occurrences de la classe c_i parmi les données 
+        # p(c_i|a_j) = nombre d'occurrences de la classe c_i parmi les données
         #              pour lesquelles A vaut a_j /
         #              nombre d'occurrences de la valeur a_j parmi les données.
         return nombre_ci / nombre_aj
@@ -259,18 +227,18 @@ class ID3_continous:
         classes = list(set([donnee[0] for donnee in donnees]))
 
         # Calcule p(c_i|a_j) pour chaque classe c_i.
-        p_ci_ajs = [self.p_ci_aj(donnees, attribut, valeur, classe) 
+        p_ci_ajs = [self.p_ci_aj(donnees, attribut, valeur, classe)
                     for classe in classes]
 
         # Si p vaut 0 -> plog(p) vaut 0.
-        return -sum([p_ci_aj * log(p_ci_aj, 2.0) 
-                    for p_ci_aj in p_ci_ajs 
-                    if p_ci_aj != 0])
+        return -sum([p_ci_aj * log(p_ci_aj, 2.0)
+                     for p_ci_aj in p_ci_ajs
+                     if p_ci_aj != 0])
 
     def h_C_A(self, donnees, attribut, valeurs):
         """ H(C|A) - l'entropie de la classe après avoir choisi de partitionner\
             les données suivant les valeurs de l'attribut A.
-            
+
             :param list donnees: les données d'apprentissage.
             :param attribut: l'attribut A.
             :param list valeurs: les valeurs a_j de l'attribut A.
@@ -282,30 +250,5 @@ class ID3_continous:
         # Calcule H_C_aj pour chaque valeur a_j de l'attribut A.
         h_c_ajs = [self.h_C_aj(donnees, attribut, valeur)
                    for valeur in valeurs]
-        print(p_ajs)
-        print()
-        somme = sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])
-        print(somme)
-        return somme
 
-
-
-
-
-        # Calcule P(a_j) pour chaque valeur a_j de l'attribut A.
-
-        #(alice) on va trouver la valeur min
-        #p_ajs = min([self.p_aj(donnees, attribut, valeur) for valeur in valeurs])
-        # p_ajs = {}
-        # for valeur in valeurs:
-        #     p_ajs[valeur] = [self.p_aj(donnees, attribut, valeur)]
-        #
-        # valeur = min(p_ajs.items(), key=lambda entro: entro[1])[0]
-        #
-        # # Calcule H_C_aj pour chaque valeur a_j de l'attribut A.
-        # h_c_ajs = [self.h_C_aj(donnees, attribut, valeur)]
-        #            #for valeur in valeurs]
-        #
-        #
-        # return h_c_ajs, valeur
-        # #sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])
+        return sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])

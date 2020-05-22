@@ -34,20 +34,17 @@ class ResultValues:
 
 
         #Task 5
-        """
+
         self.file_continous_train = 'data/train_continuous.csv'
         donnees_continous = csv_reader(self.file_continous_train)
         self.file_continous_test = 'data/test_public_continuous.csv'
         self.id3_continous = ID3_continous()
-        self.arbre_continous = self.id3_continous.construit_arbre(donnees_continous)
-        self.precision_continous = test_precision(self.file_continous_test, self.arbre_continous)
-        """
+        self.arbre_advance = self.id3_continous.construit_arbre(donnees_continous)
+        self.precision_continous = test_precision(self.file_continous_test, self.arbre_advance)
 
 
 
-        self.arbre_advance = None
-
-        self.print_task_1()
+        self.print_task_5()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
@@ -92,7 +89,7 @@ class ResultValues:
 
     def print_task_5(self):
         print('-----TASK 5------')
-        print(self.arbre_continous)
+        print(self.arbre_advance)
         print()
         print('Précision: '), print(self.precision_continous)
 
