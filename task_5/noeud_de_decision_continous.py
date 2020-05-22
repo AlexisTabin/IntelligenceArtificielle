@@ -11,8 +11,9 @@ class NoeudDeDecision_continous:
             le noeud est un noeud terminal).
             :param list donnees: la liste des données qui tombent dans la\
             sous-classification du noeud.
+            :param valeur_separation: la valeur qui a engendré les 2 sous-noeuds
             :param enfants: un dictionnaire associant un fils (sous-noeud) à\
-            chaque valeur de l'attribut du noeud (``None`` si le\
+            chaque valeur (less than/more than) de l'attribut du noeud (``None`` si le\
             noeud est terminal).
         """
 
@@ -47,11 +48,15 @@ class NoeudDeDecision_continous:
         if self.terminal():
             rep += 'Alors {}'.format(self.classe().upper())
         else:
-            valeur = donnee[self.attribut]
-            enfant = self.enfants[valeur]
-            rep += 'Si {} = {}, '.format(self.attribut, valeur.upper())
+            valeur_separation = self.enfants['valeur separation']
+            enfant_less = self.enfants['less than ']
+            enfant_more = self.enfants['more than ']
+            print('attribut: ', self.attribut)
+            print(self.enfants['less than '])
+
+            rep += 'Si {} = {} {}, '.format(self.attribut, valeur_separation.upper(), valeur_separation)
             try:
-                rep += enfant.classifie(donnee)
+                rep += enfant_less.classifie(donnee)
             except:
                 rep += self.p_class
         return rep
@@ -72,9 +77,13 @@ class NoeudDeDecision_continous:
                 rep += str(donnee) + '\n' 
 
         else:
+            valeur_separation = self.enfants['valeur separation']
             for valeur, enfant in self.enfants.items():
+                #on ne veut pas prendre en compte la valeur de separation
+                if isinstance(enfant, str):
+                    break
                 rep += '---'*level
-                rep += 'Si {} = {}: \n'.format(self.attribut, valeur.upper())
+                rep += 'Si {} = {} {}: \n'.format(self.attribut, valeur.upper(), valeur_separation)
                 rep += enfant.repr_arbre(level+1)
 
         return rep

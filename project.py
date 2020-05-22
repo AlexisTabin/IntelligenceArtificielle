@@ -19,6 +19,7 @@ class ResultValues:
         self.id3 = ID3()
         self.arbre = self.id3.construit_arbre(donnees_train)
 
+
         # Task 2
         self.file_task2 = 'data/test_public_bin.csv'
         self.precision = test_precision(self.file_task2, self.arbre)
@@ -30,7 +31,7 @@ class ResultValues:
         # Task 4
 
 
-        # Task 5
+        #Task 5
         self.file_continous_train = 'data/train_continuous.csv'
         donnees_continous = csv_reader(self.file_continous_train)
         self.file_continous_test = 'data/test_public_continuous.csv'

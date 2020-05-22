@@ -57,7 +57,7 @@ class ID3:
             :return: une instance de NoeudDeDecision correspondant à la racine de\
             l'arbre de décision.
         """
-        
+
         def classe_unique(donnees):
             """ Vérifie que toutes les données appartiennent à la même classe. """
             
@@ -70,14 +70,17 @@ class ID3:
             return True
 
         if donnees == []:
+
             return NoeudDeDecision(None, [str(predominant_class), dict()], str(predominant_class))
 
         # Si toutes les données restantes font partie de la même classe,
         # on peut retourner un noeud terminal.         
         elif classe_unique(donnees):
+
             return NoeudDeDecision(None, donnees, str(predominant_class))
-            
+
         else:
+
             # Sélectionne l'attribut qui réduit au maximum l'entropie.
             h_C_As_attribs = [(self.h_C_A(donnees, attribut, attributs[attribut]), 
                                attribut) for attribut in attributs]
@@ -89,7 +92,7 @@ class ID3:
             del attributs_restants[attribut]
 
             partitions = self.partitionne(donnees, attribut, attributs[attribut])
-            
+
             enfants = {}
             for valeur, partition in partitions.items():
                 enfants[valeur] = self.construit_arbre_recur(partition,
