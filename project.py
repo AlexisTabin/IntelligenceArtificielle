@@ -1,11 +1,13 @@
 import random
 
 from moteur_id3.id3 import ID3
+from task_1.arbre_statistiques import Statistiques
 from task_1.csc_reader import csv_reader
 from task_2.test_precision import test_precision
 from task_3.rule_generation import generateur_de_regles, derive_faits_depuis_fichier, justification
 from task_4.abduction import nb_patients_sauvables, diagnostic_et_prescription
 from task_5.id3_continous import ID3_continous
+
 
 
 class ResultValues:
@@ -32,19 +34,20 @@ class ResultValues:
 
 
         #Task 5
+        """
         self.file_continous_train = 'data/train_continuous.csv'
         donnees_continous = csv_reader(self.file_continous_train)
         self.file_continous_test = 'data/test_public_continuous.csv'
         self.id3_continous = ID3_continous()
         self.arbre_continous = self.id3_continous.construit_arbre(donnees_continous)
         self.precision_continous = test_precision(self.file_continous_test, self.arbre_continous)
-
+        """
 
 
 
         self.arbre_advance = None
 
-        self.print_tasks()
+        self.print_task_1()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
@@ -53,6 +56,8 @@ class ResultValues:
         print('-----TASK 1-----')
         print('Arbre de décision:')
         print(self.arbre)
+        print('-----Statistiques-------')
+        Statistiques.arbre_statistiques(self, self.arbre)
 
     def print_task_2(self):
         print('-----TASK 2-----')
