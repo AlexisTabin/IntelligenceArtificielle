@@ -53,18 +53,18 @@ class NoeudDeDecision_continous:
             enfant_less = self.enfants['less than ']
             enfant_more = self.enfants['more than ']
 
-            # on met cette donnee à gauche si sa valeur d'attribut est < que valeur_separation:
-            if donnee[self.attribut] < valeur_separation:
-                rep += 'Si {} < {}, '.format(self.attribut, valeur_separation)
+            # on met cette donnee à gauche si sa valeur d'attribut est <= que valeur_separation:
+            if donnee[self.attribut] <= valeur_separation:
+                rep += 'Si {} <= {}, '.format(self.attribut, valeur_separation)
 
                 try:
                     rep += enfant_less.classifie(donnee)
                 except:
                     rep += self.p_class
 
-            # sinon on met dans le noeud de droite (valeur >= à valeur_separation)
+            # sinon on met dans le noeud de droite (valeur > à valeur_separation)
             else:
-                rep += 'Si {} >= {}, '.format(self.attribut, valeur_separation)
+                rep += 'Si {} > {}, '.format(self.attribut, valeur_separation)
 
                 try:
                     rep += enfant_more.classifie(donnee)
@@ -93,14 +93,14 @@ class NoeudDeDecision_continous:
             enfant_less = self.enfants['less than ']
             enfant_more = self.enfants['more than ']
 
-            # gauche, <:
+            # gauche, <=:
             rep += '---' * level
-            rep += 'Si {} < {} : \n'.format(self.attribut, valeur_separation)
+            rep += 'Si {} <= {} : \n'.format(self.attribut, valeur_separation)
             rep += enfant_less.repr_arbre(level + 1)
 
-            # droite, >=:
+            # droite, >:
             rep += '---' * level
-            rep += 'Si {} >= {} : \n'.format(self.attribut, valeur_separation)
+            rep += 'Si {} > {} : \n'.format(self.attribut, valeur_separation)
             rep += enfant_more.repr_arbre(level + 1)
 
         return rep

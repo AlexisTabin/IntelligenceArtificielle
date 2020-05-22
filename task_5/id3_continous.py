@@ -86,7 +86,7 @@ class ID3_continous:
             h_C_As_attribs = []
 
             for attribut in attributs:
-                h_C_As = [(self.h_C_aj(donnees, attribut, valeur),
+                h_C_As = [(self.h_C_A(donnees, attribut, valeur),
                            attribut, valeur) for valeur in attributs[attribut]]
 
                 h_C_As_attribs = h_C_As_attribs + h_C_As
@@ -94,10 +94,10 @@ class ID3_continous:
             # trouver l'entropie minimum, l'attribut + sa valeur correspondante
             min_entro = 2
             for ligne in h_C_As_attribs:
-                if ligne[0] < min_entro:  # and ligne[0] > 0: #SI ON NE PREND PAS D'ENTROPIE = a 0
+                if ligne[0] < min_entro: #and ligne[0] > 0: #SI ON NE PREND PAS D'ENTROPIE = a 0
 
                     # on veut verifier que la valeur pour cette attribut n'est pas la min sinon inutile (max okay car >=)
-                    if ligne[2] != min(attributs[ligne[1]]):
+                    if ligne[2] != max(attributs[ligne[1]]):
                         min_entro = ligne[0]
                         min_attribut = ligne[1]
                         min_valeur = ligne[2]
@@ -147,16 +147,16 @@ class ID3_continous:
             vaut a_j.
         """
 
-        # GAUCHE: LESS THAN
-        # DROITE: GREATER THAN OR EQUAL TO
+        # GAUCHE: LESS THAN OR EQUAL TO
+        # DROITE: GREATER THAN
 
         gauche = []
         droite = []
 
         for donnee in donnees:
-            if Decimal(donnee[1][attribut]) < Decimal(valeur):  # on met dans le noeud de gauche
+            if Decimal(donnee[1][attribut]) <= Decimal(valeur):  # on met dans le noeud de gauche
                 gauche.append(donnee)
-            elif Decimal(donnee[1][attribut]) >= Decimal(valeur):  # on met dans le noeud de droite
+            elif Decimal(donnee[1][attribut]) > Decimal(valeur):  # on met dans le noeud de droite
                 droite.append(donnee)
 
         return [gauche, droite]
@@ -250,5 +250,6 @@ class ID3_continous:
         # Calcule H_C_aj pour chaque valeur a_j de l'attribut A.
         h_c_ajs = [self.h_C_aj(donnees, attribut, valeur)
                    for valeur in valeurs]
+
 
         return sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])

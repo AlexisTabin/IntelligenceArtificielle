@@ -95,10 +95,10 @@ class ResultValues:
 
 
     def print_tasks(self):
-        #self.print_task_1()
-        #self.print_task_2()
-        #self.print_task_3()
-        #self.print_task_4()
+        self.print_task_1()
+        self.print_task_2()
+        self.print_task_3()
+        self.print_task_4()
         self.print_task_5()
 
 
