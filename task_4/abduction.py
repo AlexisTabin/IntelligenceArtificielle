@@ -13,7 +13,7 @@ Si c'est 1 ou 2, on garde la règle
 A la fin, on se retrouve avec pour chaque patient, une règle associée,
 qui nécessite soit 0, 1 ou 2 changement pour que le patient soit diagnostiqué guerri
 
-Deuxième idée : En enlevant des règles et des patiens l'âge et le sexe, cela induit une erreur.
+Deuxième idée : En enlevant des règles et des patients l'âge et le sexe, cela induit une erreur.
 L'idée est de garder en considération l'âge et le sexe, mais si un patient diffère d'une règle
 à cause d'un de ces deux attributs, alors on abandonne la règle
 """

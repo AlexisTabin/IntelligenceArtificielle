@@ -92,7 +92,7 @@ class ResultValues:
     def print_task_5(self):
         print('------TASK 5------')
         print('---Arbre de décision avancé---')
-        print(self.arbre_advance)
+        #print(self.arbre_advance)
         print()
         print('---Précision---')
         print(test_precision(self.file_continous_test, self.arbre_advance), ' % de prédictions justes')
