@@ -116,7 +116,9 @@ class ID3:
         for donnee in donnees:
             partition = partitions[donnee[1][attribut]]
             partition.append(donnee)
-            
+            print('partition: ', partition)
+        print('partitions : ', partitions)
+
         return partitions
 
     def p_aj(self, donnees, attribut, valeur):

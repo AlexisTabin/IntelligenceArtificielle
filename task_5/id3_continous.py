@@ -4,11 +4,8 @@ from .noeud_de_decision_continous import NoeudDeDecision_continous
 
 
 class ID3_continous:
-    """ Algorithme ID3.
+    """ Algorithme ID3, pour les données continues.
 
-        This is an updated version from the one in the book (Intelligence Artificielle par la pratique).
-        Specifically, in construit_arbre_recur(), if donnees == [] (line 70), it returns a terminal node with the predominant class of the dataset -- as computed in construit_arbre() -- instead of returning None.
-        Moreover, the predominant class is also passed as a parameter to NoeudDeDecision().
     """
 
     def construit_arbre(self, donnees):
@@ -42,6 +39,7 @@ class ID3_continous:
                 predominant_class_counter = [row[0] for row in donnees].count(c)
                 predominant_class = c
         # print(predominant_class)
+
 
         arbre = self.construit_arbre_recur(donnees, attributs, predominant_class)
 
@@ -80,32 +78,56 @@ class ID3_continous:
             return NoeudDeDecision_continous(None, donnees, str(predominant_class))
 
 
-        else:  # Sélectionne la combinaison attribut/valeur qui réduit au maximum l'entropie, en utilisant h_C_aj
+        else:  # Sélectionne la meilleure combinaison attribut/valeur
 
-            # toutes les entropies
+            #première idée: trouver l'entropie minimale
+            """
             h_C_As_attribs = []
-
             for attribut in attributs:
-                h_C_As = [(self.h_C_A(donnees, attribut, valeur),
+                h_C_As = [(self.h_C_aj(donnees, attribut, valeur),
                            attribut, valeur) for valeur in attributs[attribut]]
-
                 h_C_As_attribs = h_C_As_attribs + h_C_As
 
-            # trouver l'entropie minimum, l'attribut + sa valeur correspondante
             min_entro = 2
             for ligne in h_C_As_attribs:
+                # print(ligne[0])
                 if ligne[0] < min_entro: #and ligne[0] > 0: #SI ON NE PREND PAS D'ENTROPIE = a 0
 
-                    # on veut verifier que la valeur pour cette attribut n'est pas la min sinon inutile (max okay car >=)
-                    if ligne[2] != max(attributs[ligne[1]]):
+                    # on veut verifier que la valeur pour cette attribut n'est pas la max sinon boucles infinies (min okay car <=)
+                    if ligne[2] != min(attributs[ligne[1]]):
+                        # print(attributs[ligne[1]])
+                        # print(min(attributs[ligne[1]]))
                         min_entro = ligne[0]
-                        min_attribut = ligne[1]
-                        min_valeur = ligne[2]
+                        attribut_separation = ligne[1]
+                        valeur_separation = ligne[2]
+            """
 
-            # Crée les sous-arbres de manière récursive.
-            partitions = self.partitionne(donnees, min_attribut, min_valeur)
+            #deuxième idée: trouver le gain maximal
+            gains = []
+            for attribut in attributs:
+                for valeur in attributs[attribut]:
+                    h_C_aj = self.h_C_aj(donnees, attribut, valeur)
+                    h_C_A = self.h_C_A(donnees, attribut, [valeur])
+                    gains = gains + [[h_C_aj - h_C_A, attribut, valeur]] #definition du gain (internet)
 
-            # Mise à jour des nouveaux attributs pour chaque noeud (pas delete l'attribut!)
+            gain_max = -1
+            attribut_separation = None
+            valeur_separation = None
+            for gain in gains:
+                #gain supérieur, mais pour une valeur qui n'est pas la borne inférieure du domaine de valeurs de l'attribut
+                #sinon boucle infinie
+                if gain[0] >= gain_max and gain[2] != min(attributs[gain[1]]):
+                    gain_max = gain[0]
+                    attribut_separation = gain[1]
+                    valeur_separation = gain[2]
+
+
+
+
+
+            partitions = self.partitionne(donnees, attribut_separation, valeur_separation)
+
+            # Mise à jour des nouveaux attributs pour chaque noeud (en gardant l'attribut de séparation dans le noeud de droite (>=))
             attributs_gauche = {}
             for donnee in partitions[0]:
                 for attribut, valeur in donnee[1].items():
@@ -124,7 +146,7 @@ class ID3_continous:
                         attributs_droite[attribut] = valeurs
                     valeurs.add(valeur)
 
-            # creation des 2 enfants (3e entree: valeur de separation, utile pour l'affichage de NoeudDeDecision)
+            # creation des 2 enfants
             enfants = {}
             enfants['less than '] = self.construit_arbre_recur(partitions[0],
                                                                attributs_gauche,
@@ -132,9 +154,8 @@ class ID3_continous:
             enfants['more than '] = self.construit_arbre_recur(partitions[1],
                                                                attributs_droite,
                                                                predominant_class)
-            enfants['valeur separation'] = min_valeur
 
-            return NoeudDeDecision_continous(min_attribut, donnees, str(predominant_class), enfants)
+            return NoeudDeDecision_continous(attribut_separation, donnees, str(predominant_class), enfants, valeur_separation)
 
     def partitionne(self, donnees, attribut, valeur):
         """ Partitionne les données sur les valeurs a_j de l'attribut A.
@@ -147,18 +168,15 @@ class ID3_continous:
             vaut a_j.
         """
 
-        # GAUCHE: LESS THAN OR EQUAL TO
-        # DROITE: GREATER THAN
-
-        gauche = []
-        droite = []
+        gauche = [] # LESS THAN
+        droite = [] # GREATER THAN OR EQUAL TO
 
         for donnee in donnees:
-            if Decimal(donnee[1][attribut]) <= Decimal(valeur):  # on met dans le noeud de gauche
+            if Decimal(donnee[1][attribut]) < Decimal(valeur):  # on met dans le noeud de gauche
                 gauche.append(donnee)
-            elif Decimal(donnee[1][attribut]) > Decimal(valeur):  # on met dans le noeud de droite
-                droite.append(donnee)
 
+            elif Decimal(donnee[1][attribut]) >= Decimal(valeur):  # on met dans le noeud de droite
+                droite.append(donnee)
         return [gauche, droite]
 
     def p_aj(self, donnees, attribut, valeur):

@@ -1,26 +1,24 @@
 class NoeudDeDecision_continous:
-    """ Un noeud dans un arbre de décision.
-
-        This is an updated version from the one in the book (Intelligence Artificielle par la pratique).
-        Specifically, if we can not classify a data point, we return the predominant class (see lines 53 - 56).
+    """ Un noeud dans un arbre de décision avancé, qui aura toujours 2 enfants.
     """
 
-    def __init__(self, attribut, donnees, p_class, enfants=None):
+    def __init__(self, attribut, donnees, p_class, enfants=None, valeur_separation = None):
         """
             :param attribut: l'attribut de partitionnement du noeud (``None`` si\
             le noeud est un noeud terminal).
             :param list donnees: la liste des données qui tombent dans la\
             sous-classification du noeud.
-            :param valeur_separation: la valeur qui a engendré les 2 sous-noeuds
             :param enfants: un dictionnaire associant un fils (sous-noeud) à\
             chaque valeur (less than/more than) de l'attribut du noeud (``None`` si le\
             noeud est terminal).
+            :param valeur_separation: la valeur qui a engendré les 2 sous-noeuds
         """
 
         self.attribut = attribut
         self.donnees = donnees
         self.enfants = enfants
         self.p_class = p_class
+        self.valeur_separation = valeur_separation
 
     def terminal(self):
         """ Vérifie si le noeud courant est terminal. """
@@ -47,24 +45,23 @@ class NoeudDeDecision_continous:
         rep = ''
         if self.terminal():
             rep += 'Alors {}'.format(self.classe().upper())
-        else:
 
-            valeur_separation = self.enfants['valeur separation']
+        else:
             enfant_less = self.enfants['less than ']
             enfant_more = self.enfants['more than ']
 
-            # on met cette donnee à gauche si sa valeur d'attribut est <= que valeur_separation:
-            if donnee[self.attribut] <= valeur_separation:
-                rep += 'Si {} <= {}, '.format(self.attribut, valeur_separation)
+            # on met cette donnee à gauche si la valeur de l'attribut est < que valeur_separation:
+            if donnee[self.attribut] < self.valeur_separation:
+                rep += 'Si {} < {}, '.format(self.attribut, self.valeur_separation)
 
                 try:
                     rep += enfant_less.classifie(donnee)
                 except:
                     rep += self.p_class
 
-            # sinon on met dans le noeud de droite (valeur > à valeur_separation)
+            # sinon on met dans le noeud de droite (valeur >= que valeur_separation)
             else:
-                rep += 'Si {} > {}, '.format(self.attribut, valeur_separation)
+                rep += 'Si {} >= {}, '.format(self.attribut, self.valeur_separation)
 
                 try:
                     rep += enfant_more.classifie(donnee)
@@ -89,18 +86,17 @@ class NoeudDeDecision_continous:
                 rep += str(donnee) + '\n'
 
         else:
-            valeur_separation = self.enfants['valeur separation']
             enfant_less = self.enfants['less than ']
             enfant_more = self.enfants['more than ']
 
-            # gauche, <=:
+            # gauche, <:
             rep += '---' * level
-            rep += 'Si {} <= {} : \n'.format(self.attribut, valeur_separation)
+            rep += 'Si {} < {} : \n'.format(self.attribut, self.valeur_separation)
             rep += enfant_less.repr_arbre(level + 1)
 
-            # droite, >:
+            # droite, >=:
             rep += '---' * level
-            rep += 'Si {} > {} : \n'.format(self.attribut, valeur_separation)
+            rep += 'Si {} >= {} : \n'.format(self.attribut, self.valeur_separation)
             rep += enfant_more.repr_arbre(level + 1)
 
         return rep
