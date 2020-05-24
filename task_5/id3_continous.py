@@ -27,7 +27,7 @@ class ID3_continous:
                 if valeurs is None:
                     valeurs = set()
                     attributs[attribut] = valeurs
-                valeurs.add(valeur)
+                valeurs.add((valeur))
 
         # Find the predominant class
         classes = set([row[0] for row in donnees])
@@ -112,7 +112,7 @@ class ID3_continous:
                     if valeurs is None:
                         valeurs = []
                         attributs_gauche[attribut] = valeurs
-                    valeurs.append(valeur)
+                    valeurs.append((valeur))
 
             attributs_droite = {}
             for donnee in partitions[1]:
@@ -121,7 +121,7 @@ class ID3_continous:
                     if valeurs is None:
                         valeurs = []
                         attributs_droite[attribut] = valeurs
-                    valeurs.append(valeur)
+                    valeurs.append((valeur))
 
             # creation des 2 enfants
             enfants = {}

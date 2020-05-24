@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 class NoeudDeDecision_continous:
     """ Un noeud dans un arbre de décision avancé, qui aura toujours 2 enfants.
     """
@@ -51,7 +53,7 @@ class NoeudDeDecision_continous:
             enfant_more = self.enfants['more than ']
 
             # on met cette donnee à gauche si la valeur de l'attribut est < que valeur_separation:
-            if donnee[self.attribut] < self.valeur_separation:
+            if (donnee[self.attribut]) < self.valeur_separation:
                 rep += 'Si {} < {}, '.format(self.attribut, self.valeur_separation)
 
                 try:
