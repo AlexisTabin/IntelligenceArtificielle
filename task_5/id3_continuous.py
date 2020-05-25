@@ -81,6 +81,7 @@ class ID3_continuous:
         else:
             # Sélectionne la combinaison attribut/valeur avec l'entropie (h_C_aj) minimale
             entropies = []
+
             for attribut in attributs:
                 for valeur in attributs[attribut]:
                     h_C_aj = self.h_C_aj(donnees, attribut, valeur)
@@ -96,7 +97,6 @@ class ID3_continuous:
                     entropie_min = entropie[0]
                     attribut_separation = entropie[1]
                     valeur_separation = entropie[2]
-
 
             partitions = self.partitionne(donnees, attribut_separation, valeur_separation)
 
@@ -149,8 +149,9 @@ class ID3_continuous:
             if Decimal(donnee[1][attribut]) < Decimal(valeur):  # on met dans le noeud de gauche
                 gauche.append(donnee)
 
-            elif Decimal(donnee[1][attribut]) >= Decimal(valeur):  # on met dans le noeud de droite
+            else:  # on met dans le noeud de droite
                 droite.append(donnee)
+
         return [gauche, droite]
 
     def p_aj(self, donnees, attribut, valeur):
