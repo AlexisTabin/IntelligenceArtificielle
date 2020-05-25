@@ -8,7 +8,7 @@ def generateur_de_regles(arbre):
     L'idée est d'appeler le depth first search algorithm avec comme but un noeud qui n'est pas dans l'arbre.
     De cette manière, l'algorithme va avoir le comportement souhaité et ne s'arrêtera qu'une fois la totalité de l'arbre
     exploré.
-
+et
     Autre Idée :
     Se baser sur la manière dont on print l'arbre récursivement pour implémenter les règles (semble bieeeeeeeeen plus simple)
      """

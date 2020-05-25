@@ -1,21 +1,19 @@
+from statistics import mean
+
 from moteur_id3 import noeud_de_decision as NoeudDeDecision
 from task_5 import noeud_de_decision_continuous as NoeudDeDecision
-from statistics import mean
+
 
 class Statistiques:
 
-    def arbre_statistiques(self, arbre: NoeudDeDecision):
-        """Autre Idée :
-        Se baser sur la manière dont on print l'arbre récursivement pour implémenter les règles (semble bieeeeeeeeen plus simple)
-         """
-
-        """ Les règles et les faits sont des dictionnaires, rendant leur comparaison plus facile"""
+    def __init__(self):
         self.feuille = 0
         self.level = 0
+        self.longueurs = []
+        self.enfants = []
 
+    def arbre_statistiques(self, arbre: NoeudDeDecision):
         def compteur_de_feuille(arbre: NoeudDeDecision):
-            """ Permet de générer les règles à partir d'un arbre
-            """
             if arbre.terminal():
                 self.feuille += 1
             else:
@@ -24,7 +22,6 @@ class Statistiques:
 
         compteur_de_feuille(arbre)
         print("Nb de feuillles : {}".format(self.feuille))
-        self.longueurs = []
 
         def maximum_longueur_branche(arbre: NoeudDeDecision, level=0):
             if arbre.terminal():
@@ -36,8 +33,6 @@ class Statistiques:
         maximum_longueur_branche(arbre)
         print("Max : {}".format(max(self.longueurs)))
         print("Avg : {}".format(round(mean(self.longueurs), 2)))
-
-        self.enfants = []
 
         def nombre_enfants(arbre: NoeudDeDecision):
             if not arbre.terminal():

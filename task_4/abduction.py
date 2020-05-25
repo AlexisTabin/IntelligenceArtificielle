@@ -24,7 +24,7 @@ def diagnostic_et_prescription(patient: dict, regles: List[Regle]):
     @return diagnostic, prescription, code
     code = 1 si le patient est soignable, sert à compter le nb de personnes soignables
     """
-    regle, problemes = trouve_regles_possibles(patient, regles)
+    regle, problemes = trouve_meilleure_regle(patient, regles)
     diagnostic = "nb problemes : {} => ".format(problemes)
     if problemes == 0:
         diagnostic += "Le patient n'est pas malade :)"
@@ -38,7 +38,7 @@ def diagnostic_et_prescription(patient: dict, regles: List[Regle]):
         return diagnostic, prescritpion, 1
 
 
-def trouve_regles_possibles(patient: dict, regles: List[Regle]):
+def trouve_meilleure_regle(patient: dict, regles: List[Regle]):
     """
     @param patient : un patient
     @param regles : Une liste de règle
