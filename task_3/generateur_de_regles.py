@@ -48,7 +48,7 @@ def derive_faits_depuis_fichier(fichier):
 
 def justification(exemple, regles):
     "Renvoie un string j, la justification de l'exemple par la bonne règle"
-    regle_valide = find_regle(exemple, regles)
+    regle_valide = trouve_regle(exemple, regles)
     result = 'Grâce à cette règle : \n'
     result += regle_valide.__repr__()
     result += 'On en déduit : \n('
@@ -57,7 +57,7 @@ def justification(exemple, regles):
     return '{}) => {}\n'.format(result[:-1], str(regle_valide.conclusion))
 
 
-def find_regle(fait, regles):
+def trouve_regle(fait, regles):
     """Permet de trouver la/les règle(s) parmi la liste de règles, qui justifie le fait"""
     for regle in regles:
         is_valid = True

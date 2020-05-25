@@ -1,9 +1,10 @@
-from math import log
 from decimal import Decimal
-from .noeud_de_decision_continuous import NoeudDeDecision_continuous
+from math import log
+
+from .noeud_de_decision_continuous import NoeudDeDecisionContinuous
 
 
-class ID3_continuous:
+class ID3Continuous:
     """ Algorithme ID3, pour les données continues.
 
     """
@@ -40,7 +41,6 @@ class ID3_continuous:
                 predominant_class = c
         # print(predominant_class)
 
-
         arbre = self.construit_arbre_recur(donnees, attributs, predominant_class)
 
         return arbre
@@ -70,12 +70,12 @@ class ID3_continuous:
             return True
 
         if donnees == []:
-            return NoeudDeDecision_continuous(None, [str(predominant_class), dict()], str(predominant_class))
+            return NoeudDeDecisionContinuous(None, [str(predominant_class), dict()], str(predominant_class))
 
         # Si toutes les données restantes font partie de la même classe,
         # on peut retourner un noeud terminal.
         elif classe_unique(donnees):
-            return NoeudDeDecision_continuous(None, donnees, str(predominant_class))
+            return NoeudDeDecisionContinuous(None, donnees, str(predominant_class))
 
 
         else:
@@ -129,7 +129,8 @@ class ID3_continuous:
                                                                attributs_droite,
                                                                str(predominant_class))
 
-            return NoeudDeDecision_continuous(attribut_separation, donnees, str(predominant_class), enfants, valeur_separation)
+            return NoeudDeDecisionContinuous(attribut_separation, donnees, str(predominant_class), enfants,
+                                             valeur_separation)
 
     def partitionne(self, donnees, attribut, valeur):
         """ Partitionne les données sur les valeurs a_j de l'attribut A.
@@ -142,8 +143,8 @@ class ID3_continuous:
             vaut a_j.
         """
 
-        gauche = [] # LESS THAN
-        droite = [] # GREATER THAN OR EQUAL TO
+        gauche = []  # LESS THAN
+        droite = []  # GREATER THAN OR EQUAL TO
 
         for donnee in donnees:
             if Decimal(donnee[1][attribut]) < Decimal(valeur):  # on met dans le noeud de gauche
@@ -243,6 +244,5 @@ class ID3_continuous:
         # Calcule H_C_aj pour chaque valeur a_j de l'attribut A.
         h_c_ajs = [self.h_C_aj(donnees, attribut, valeur)
                    for valeur in valeurs]
-
 
         return sum([p_aj * h_c_aj for p_aj, h_c_aj in zip(p_ajs, h_c_ajs)])

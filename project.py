@@ -4,10 +4,9 @@ from moteur_id3.id3 import ID3
 from task_1.arbre_statistiques import Statistiques
 from task_1.csv_reader import csv_reader
 from task_2.test_precision import test_precision
-from task_3.rule_generation import generateur_de_regles, derive_faits_depuis_fichier, justification
+from task_3.generateur_de_regles import generateur_de_regles, derive_faits_depuis_fichier, justification
 from task_4.abduction import nb_patients_sauvables, diagnostic_et_prescription
-from task_5.id3_continuous import ID3_continuous
-
+from task_5.id3_continuous import ID3Continuous
 
 
 class ResultValues:
@@ -21,7 +20,6 @@ class ResultValues:
         self.id3 = ID3()
         self.arbre = self.id3.construit_arbre(donnees_train)
 
-
         # Task 2
         self.file_test = 'data/test_public_bin.csv'
 
@@ -31,18 +29,15 @@ class ResultValues:
 
         # Task 4
 
-
-        #Task 5
+        # Task 5
         self.file_continuous_train = 'data/train_continuous.csv'
         donnees_continuous_train = csv_reader(self.file_continuous_train)
-        self.id3_continuous = ID3_continuous()
+        self.id3_continuous = ID3Continuous()
         self.arbre_advance = self.id3_continuous.construit_arbre(donnees_continuous_train)
         self.file_continuous_test = 'data/test_public_continuous.csv'
 
-
-
-
-        self.print_task_3()
+        #TODO : UNCOMMENT THIS LINE TO PRINT THE RESULTS
+        # self.print_tasks()
 
     def get_results(self):
         return [self.arbre, self.faits_initiaux, self.regles, self.arbre_advance]
@@ -53,7 +48,7 @@ class ResultValues:
         print(self.arbre)
         print()
         print('---Statistiques---')
-        Statistiques.arbre_statistiques(self, self.arbre)
+        Statistiques(self.arbre).arbre_statistiques()
         print()
 
     def print_task_2(self):
@@ -71,8 +66,8 @@ class ResultValues:
         rdm_patient = self.faits_initiaux[rdm_patient_index]
         print(justification(rdm_patient, self.regles))
         if rdm_patient['diagnostic'] == 1:
-           diagnostic, presription, _ = diagnostic_et_prescription(rdm_patient, self.regles)
-           print(presription)
+            diagnostic, presription, _ = diagnostic_et_prescription(rdm_patient, self.regles)
+            print(presription)
         print()
 
     def print_task_4(self):
@@ -92,15 +87,14 @@ class ResultValues:
     def print_task_5(self):
         print('------TASK 5------')
         print('---Arbre de décision avancé---')
-        #print(self.arbre_advance)
+        # print(self.arbre_advance)
         print()
         print('---Précision---')
         print(test_precision(self.file_continuous_test, self.arbre_advance), ' % de prédictions justes')
         print()
         print('---Statistiques---')
-        Statistiques.arbre_statistiques(self, self.arbre_advance)
+        Statistiques(self.arbre_advance).arbre_statistiques()
         print()
-
 
     def print_tasks(self):
         self.print_task_1()

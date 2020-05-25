@@ -71,7 +71,7 @@ def soigner_patient(patient, regle):
     prescription = 'En changeant '
     for key, value in regle.conditions.items():
         if patient[key] != value:
-            if not(key == 'sex' or key == 'age'):
+            if not (key == 'sex' or key == 'age'):
                 prescription += '{} = {} par {} et'.format(key, patient[key], value)
     prescription = prescription[:-3] + ', on guérit le patient\n'
     prescription += 'Grâce à cette règle : ' + regle.__repr__()

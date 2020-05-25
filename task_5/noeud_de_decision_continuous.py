@@ -1,10 +1,8 @@
-from decimal import Decimal
-
-class NoeudDeDecision_continuous:
+class NoeudDeDecisionContinuous:
     """ Un noeud dans un arbre de décision avancé, qui aura toujours 2 enfants.
     """
 
-    def __init__(self, attribut, donnees, p_class, enfants=None, valeur_separation = None):
+    def __init__(self, attribut, donnees, p_class, enfants=None, valeur_separation=None):
         """
             :param attribut: l'attribut de partitionnement du noeud (``None`` si\
             le noeud est un noeud terminal).
