@@ -1,4 +1,4 @@
-from task_1.csc_reader import csv_reader
+from task_1.csv_reader import csv_reader
 
 
 def test_precision(file, arbre):

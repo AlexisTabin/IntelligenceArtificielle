@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-class NoeudDeDecision_continous:
+class NoeudDeDecision_continuous:
     """ Un noeud dans un arbre de décision avancé, qui aura toujours 2 enfants.
     """
 

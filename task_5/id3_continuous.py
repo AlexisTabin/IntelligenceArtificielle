@@ -1,9 +1,9 @@
 from math import log
 from decimal import Decimal
-from .noeud_de_decision_continous import NoeudDeDecision_continous
+from .noeud_de_decision_continuous import NoeudDeDecision_continuous
 
 
-class ID3_continous:
+class ID3_continuous:
     """ Algorithme ID3, pour les données continues.
 
     """
@@ -70,35 +70,32 @@ class ID3_continous:
             return True
 
         if donnees == []:
-            return NoeudDeDecision_continous(None, [str(predominant_class), dict()], str(predominant_class))
+            return NoeudDeDecision_continuous(None, [str(predominant_class), dict()], str(predominant_class))
 
         # Si toutes les données restantes font partie de la même classe,
         # on peut retourner un noeud terminal.
         elif classe_unique(donnees):
-            return NoeudDeDecision_continous(None, donnees, str(predominant_class))
+            return NoeudDeDecision_continuous(None, donnees, str(predominant_class))
 
 
         else:
-            # Sélectionne la combinaison attribut/valeur avec le gain (h_C_aj - h_C_A) minimal
-            #source: https://en.wikipedia.org/wiki/ID3_algorithm#Entropy
-
-            gains = []
+            # Sélectionne la combinaison attribut/valeur avec l'entropie (h_C_aj) minimale
+            entropies = []
             for attribut in attributs:
                 for valeur in attributs[attribut]:
                     h_C_aj = self.h_C_aj(donnees, attribut, valeur)
-                    h_C_A = self.h_C_A(donnees, attribut, [valeur])
-                    gains = gains + [[h_C_aj - h_C_A, attribut, valeur]]
+                    entropies = entropies + [[h_C_aj, attribut, valeur]]
 
-            gain_max = -1
+            entropie_min = 2
             attribut_separation = None
             valeur_separation = None
-            for gain in gains:
+            for entropie in entropies:
                 # on veut un gain supérieur, mais pour une valeur qui n'est pas la borne inférieure
                 # du domaine de valeurs de l'attribut sinon boucle infinie !
-                if gain[0] >= gain_max and gain[2] != min(attributs[gain[1]]):
-                    gain_max = gain[0]
-                    attribut_separation = gain[1]
-                    valeur_separation = gain[2]
+                if entropie[0] < entropie_min and entropie[2] != min(attributs[entropie[1]]):
+                    entropie_min = entropie[0]
+                    attribut_separation = entropie[1]
+                    valeur_separation = entropie[2]
 
 
             partitions = self.partitionne(donnees, attribut_separation, valeur_separation)
@@ -132,7 +129,7 @@ class ID3_continous:
                                                                attributs_droite,
                                                                str(predominant_class))
 
-            return NoeudDeDecision_continous(attribut_separation, donnees, str(predominant_class), enfants, valeur_separation)
+            return NoeudDeDecision_continuous(attribut_separation, donnees, str(predominant_class), enfants, valeur_separation)
 
     def partitionne(self, donnees, attribut, valeur):
         """ Partitionne les données sur les valeurs a_j de l'attribut A.

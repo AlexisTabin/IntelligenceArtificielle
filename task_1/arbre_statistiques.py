@@ -1,5 +1,5 @@
 from moteur_id3 import noeud_de_decision as NoeudDeDecision
-from task_5 import noeud_de_decision_continous as NoeudDeDecision
+from task_5 import noeud_de_decision_continuous as NoeudDeDecision
 from statistics import mean
 
 class Statistiques:
